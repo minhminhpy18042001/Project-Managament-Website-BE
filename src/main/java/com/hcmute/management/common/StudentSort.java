@@ -6,7 +6,10 @@ import lombok.Getter;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public enum SubjectSort {
-    START_DATE("start_date");
+public enum StudentSort {
+    EDUCATION_PROGRAM("education_program"),
+    MAJOR("major"),
+    CLASS("classes"),
+    SCHOOL_YEAR("school_year");
     private String name;
 }

@@ -6,7 +6,9 @@ import lombok.Getter;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public enum SubjectSort {
-    START_DATE("start_date");
+public enum LecturerSort {
+    MSSV("id"),
+    POSITION("position"),
+    QUALIFICATION("qualification");
     private String name;
 }

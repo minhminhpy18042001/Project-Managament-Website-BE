@@ -1,5 +1,6 @@
 package com.hcmute.management.controller;
 
+import com.hcmute.management.common.MajorEnum;
 import com.hcmute.management.common.OrderByEnum;
 import com.hcmute.management.common.SubjectSort;
 import com.hcmute.management.common.SubjectStatus;
@@ -102,29 +103,29 @@ public class SubjectController {
 
         }
     }
-    @GetMapping("/paging")
-    @ApiOperation("Get All")
-    public ResponseEntity<PagingResponse> getAllSubjectPaging(@RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "5") int size)
-    {
-        Page<SubjectEntity> pageSubject = subjectService.findAllSubjectPaging(page,size);
-        List<SubjectEntity> listSubject = pageSubject.toList();
-        int totalElements = subjectService.getAllSubject().size();
-        PagingResponse pagingResponse = new PagingResponse();
-        Map<String,Object> map = new HashMap<>();
-        List<Object> Result = Arrays.asList(listSubject.toArray());
-        pagingResponse.setTotalPages(pageSubject.getTotalPages());
-        pagingResponse.setEmpty(listSubject.size()==0);
-        pagingResponse.setFirst(page==0);
-        pagingResponse.setLast(page == pageSubject.getTotalPages()-1);
-        pagingResponse.getPageable().put("pageNumber",page);
-        pagingResponse.getPageable().put("pageSize",size);
-        pagingResponse.setSize(size);
-        pagingResponse.setNumberOfElements(listSubject.size());
-        pagingResponse.setTotalElements((int) pageSubject.getTotalElements());
-        pagingResponse.setContent(Result);
-        return new ResponseEntity<>(pagingResponse ,HttpStatus.OK);
-    }
+//    @GetMapping("/paging")
+//    @ApiOperation("Get All")
+//    public ResponseEntity<PagingResponse> getAllSubjectPaging(@RequestParam(defaultValue = "0") int page,
+//                                                              @RequestParam(defaultValue = "5") int size)
+//    {
+//        Page<SubjectEntity> pageSubject = subjectService.findAllSubjectPaging(page,size);
+//        List<SubjectEntity> listSubject = pageSubject.toList();
+//        int totalElements = subjectService.getAllSubject().size();
+//        PagingResponse pagingResponse = new PagingResponse();
+//        Map<String,Object> map = new HashMap<>();
+//        List<Object> Result = Arrays.asList(listSubject.toArray());
+//        pagingResponse.setTotalPages(pageSubject.getTotalPages());
+//        pagingResponse.setEmpty(listSubject.size()==0);
+//        pagingResponse.setFirst(page==0);
+//        pagingResponse.setLast(page == pageSubject.getTotalPages()-1);
+//        pagingResponse.getPageable().put("pageNumber",page);
+//        pagingResponse.getPageable().put("pageSize",size);
+//        pagingResponse.setSize(size);
+//        pagingResponse.setNumberOfElements(listSubject.size());
+//        pagingResponse.setTotalElements((int) pageSubject.getTotalElements());
+//        pagingResponse.setContent(Result);
+//        return new ResponseEntity<>(pagingResponse ,HttpStatus.OK);
+//    }
     @GetMapping("")
     @ApiOperation("Get All")
     public ResponseEntity<Object> getAll()
@@ -204,16 +205,18 @@ public class SubjectController {
     @GetMapping("/search")
     @ApiOperation("Search by Criteria")
     public ResponseEntity<Object> searchByCriteria(
-            @RequestParam(required = false,name = "KeyWord") String searchKey,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false,name = "searchText") String searchKey,
+            @RequestParam(defaultValue = "0",name = "pageIndex") int page,
+            @RequestParam(defaultValue = "5",name = "pageSize") int size,
             @RequestParam(defaultValue = "NULL") SubjectStatus subjectStatus,
-            @RequestParam(defaultValue = "LECTURER") SubjectSort sort,
+            @RequestParam(required = false) String lectureId,
+            @RequestParam(defaultValue = "NULL") MajorEnum major,
+            @RequestParam(defaultValue = "START_DATE") SubjectSort sort,
             @RequestParam(defaultValue = "DESCENDING")OrderByEnum order
             )
     {
         System.out.println(subjectStatus);
-        Page<SubjectEntity> pageSubject = subjectService.searchByCriteria(searchKey,subjectStatus.getStatus(),page,size, sort.getName(), order.getName());
+        Page<SubjectEntity> pageSubject = subjectService.searchByCriteria(searchKey,subjectStatus.getStatus(),page,size,lectureId,major.getName(), sort.getName(), order.getName());
         List<SubjectEntity> listSubject = pageSubject.toList();
         PagingResponse pagingResponse = new PagingResponse();
         Map<String,Object> map = new HashMap<>();
@@ -258,7 +261,7 @@ public class SubjectController {
     }
     @PostMapping("/deny/{subjectId}")
     @ApiOperation("Deny Subject")
-    public ResponseEntity<Object> approveSubject(@PathVariable("subjectId") String id,@RequestParam String description, HttpServletRequest req) throws Exception
+    public ResponseEntity<Object> denySubject(@PathVariable("subjectId") String id,@RequestParam String description, HttpServletRequest req) throws Exception
     {
         UserEntity user;
         try

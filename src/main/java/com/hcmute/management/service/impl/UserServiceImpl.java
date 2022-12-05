@@ -33,8 +33,8 @@ private final UserRepository userRepository;
     }
 
     @Override
-    public UserEntity findByPhone(String phone) {
-        Optional<UserEntity> user = userRepository.findByPhone(phone);
+    public UserEntity findByUserName(String userName) {
+        Optional<UserEntity> user = userRepository.findByUserName(userName);
         if (user.isEmpty())
             return null;
         return user.get();
@@ -78,6 +78,11 @@ private final UserRepository userRepository;
         String uuid = String.valueOf(UUID.randomUUID());
         String url = imageStorageService.uploadFile(file,"demo" + "/img" + name+ uuid);
         return url;
+    }
+
+    @Override
+    public UserEntity saveUser(UserEntity user) {
+        return userRepository.save(user);
     }
 
     public boolean isImageFile(MultipartFile file) {
